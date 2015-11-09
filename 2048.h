@@ -14,3 +14,6 @@ void move_cima(int MatJogo[][4]);
 int tiver_algo_na_posicao(int MatJogo[][4], int*);
 int esta_cheio(int MatJogo[][4]);
 void calcula_random_index(int*);
+void move_esquerda(int MatJogo[][4]);
+void move_direita(int MatJogo[][4]);
+void move_baixo(int MatJogo[][4]);

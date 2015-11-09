@@ -7,20 +7,27 @@ int main(){
     srand(time(NULL));
     inicializa_tabuleiro(tabuleiro);
 
-    escolha = menu_principal(); 
-    
-    switch (escolha){
-        case 1:
-            do
-               fimdepartida = jogar(tabuleiro);
-            while(fimdepartida);
-        case 2:
-            configurar();
-        case 3:
-            exit (1);
-        default:
-            printf("Escolha uma opção possível\n");
-    }
+    do{
+        escolha = menu_principal(); 
+        
+        switch (escolha){
+            case 1:
+                do
+                   fimdepartida = jogar(tabuleiro);
+                while(fimdepartida);
+                break;
+            case 2:
+                configurar();
+                break;
+            case 3:
+                printf("Até mais\n");
+                exit (1);
+                break;
+            default:
+                printf("Escolha uma opção possível\n");
+                break;
+        }
+    }while(escolha != 3);
 
 
     return 0;
@@ -56,12 +63,22 @@ int menu_principal(){
 int jogar(int MatJogo[][4]){
     int novonumero;
     int randomindex[2];
+    int esta_cheio_;
     char movimento;
+
+    esta_cheio_ = esta_cheio(MatJogo);
+    
+    if (esta_cheio_)
+    {
+        printf("Que pena, você nao conseguiu\n");
+        getchar();
+        return 0;
+    }
 
     novonumero = random_2_4();
     do{
         calcula_random_index(randomindex);
-    }while(!esta_cheio(MatJogo) && tiver_algo_na_posicao(MatJogo, randomindex));
+    }while(tiver_algo_na_posicao(MatJogo, randomindex));
     
     MatJogo[randomindex[0]][randomindex[1]] = novonumero;
     
@@ -81,9 +98,7 @@ void printa_matriz(int MatJogo[][4]){
     for (i = 0; i < 4; ++i)
     {
         for (j = 0; j < 4; ++j)
-        {
             printf("%d ", MatJogo[i][j]);
-        }
         printf("\n");
     }
     //ok!
@@ -103,6 +118,7 @@ int random_2_4(){
 }
 
 char ler_movimento(){
+    
     char movimento_escolhido;
     printf("Digite o movimento desejado\n");
     printf("São permitidos \"A,S,W,D\"\n");
@@ -114,16 +130,25 @@ char ler_movimento(){
 }
 
 void mover(char movimento_escolhido, int MatJogo[][4]){
-
     switch(movimento_escolhido){
         case 'w': case 'W':
             move_cima(MatJogo);
+            break;
+        case 'd': case 'D':
+            move_direita(MatJogo);
+            break;
+        case 'a': case 'A':
+            move_esquerda(MatJogo);
+            break;
+        case 's': case 'S':
+            move_baixo(MatJogo);
+            break;
     }
 }
 
 void move_cima(int MatJogo[][4]){
     int i, j, searcher;
-
+    int movi = 0;
     for (j = 0; j < 4; ++j)
     {
         for (i = 0; i < 4; ++i)
@@ -135,36 +160,155 @@ void move_cima(int MatJogo[][4]){
                     if (MatJogo[searcher][j] > 0){
                         MatJogo[i][j] = MatJogo[searcher][j];
                         MatJogo[searcher][j] = 0;
+                        movi = 1;
                     }
+                    else
+                        movi = 0;
                 }
-                printf("To na posição (i,j) (%d, %d)\n", i,j);
-            }      
+            }  
             if (MatJogo[i][j] == MatJogo[i+1][j])   
             {
                 MatJogo[i][j] += MatJogo[i+1][j];
                 MatJogo[i+1][j] = 0;
-            }        
+            }
+            if (movi)
+            {
+                if (MatJogo[i][j] == MatJogo[i-1][j])   
+                {
+                    MatJogo[i-1][j] += MatJogo[i][j];
+                    MatJogo[i][j] = 0;
+                } 
+            }      
         }
     }
 }
 
+void move_baixo(int MatJogo[][4]){
+    int i, j, searcher;
+    int movi = 0;
+    for (j = 0; j < 4; ++j)
+    {
+        for (i = 3; i >= 0; --i)
+        {
+            if (MatJogo[i][j]==0)
+            {
+                for (searcher = i; searcher >= 0; --searcher)
+                {
+                    if (MatJogo[searcher][j] > 0){
+                        MatJogo[i][j] = MatJogo[searcher][j];
+                        MatJogo[searcher][j] = 0;
+                        movi = 1;
+                    }
+                    else
+                        movi = 0;
+                }
+            }  
+            if (MatJogo[i][j] == MatJogo[i-1][j])   
+            {
+                MatJogo[i][j] += MatJogo[i-1][j];
+                MatJogo[i-1][j] = 0;
+            }
+            if (movi)
+            {
+                if (MatJogo[i][j] == MatJogo[i+1][j])   
+                {
+                    MatJogo[i+1][j] += MatJogo[i][j];
+                    MatJogo[i][j] = 0;
+                } 
+            }      
+        }
+    }
+}
+void move_direita(int MatJogo[][4]){
+    int i, j, searcher;
+    int movi = 0;
+    for (i = 0; i < 4; ++i)
+    {
+        for (j = 3; j >= 0; --j)
+        {
+            if (MatJogo[i][j]==0)
+            {
+                for (searcher = j; searcher >= 0; --searcher)
+                {
+                    if (MatJogo[i][searcher] > 0){
+                        MatJogo[i][j] = MatJogo[i][searcher];
+                        MatJogo[i][searcher] = 0;
+                        movi = 1;
+                    }
+                    else
+                        movi = 0;
+                }
+            }      
+            if (MatJogo[i][j] == MatJogo[i][j-1])   
+            {
+                MatJogo[i][j] += MatJogo[i][j-1];
+                MatJogo[i][j-1] = 0;
+            }  
+            if (movi)
+            {
+                if (MatJogo[i][j] == MatJogo[i][j+1])   
+                {
+                    MatJogo[i][j+1] += MatJogo[i][j];
+                    MatJogo[i][j] = 0;
+                } 
+            }   
+        }
+    }
+}
+
+void move_esquerda(int MatJogo[][4]){
+    int i, j, searcher;
+    int movi = 0;
+    for (i = 0; i < 4; ++i)
+    {
+        for (j = 0; j < 4; ++j)
+        {
+            if (MatJogo[i][j]==0)
+            {
+                for (searcher = j; searcher < 4; ++searcher)
+                {
+                    if (MatJogo[i][searcher] > 0){
+                        MatJogo[i][j] = MatJogo[i][searcher];
+                        MatJogo[i][searcher] = 0;
+                        movi = 1;
+                    }
+                    else 
+                        movi = 0;
+                }
+            }      
+            if (MatJogo[i][j] == MatJogo[i][j+1])   
+            {
+                MatJogo[i][j] += MatJogo[i][j+1];
+                MatJogo[i][j+1] = 0;
+            }   
+            if (movi)
+            {
+                if (MatJogo[i][j] == MatJogo[i][j-1])   
+                {
+                    MatJogo[i][j-1] += MatJogo[i][j];
+                    MatJogo[i][j] = 0;
+                }   
+            }     
+        }
+    }
+}
 void calcula_random_index(int* coordenada){
     coordenada[0] = rand() % 4;
     coordenada[1] = rand() % 4;
 }
 
 int esta_cheio(int MatJogo[][4]){
-    int i, j, esta_cheio=1;
+    int i, j;
     
     for ( i = 0; i < 4; ++i)
     {
         for (j = 0; j < 4; ++j)
         {
             if(MatJogo[i][j]==0)
-                esta_cheio = 0;
+                return 0;
         }
     }
-    return esta_cheio;
+    return 1;
 }
 int tiver_algo_na_posicao(int MatJogo[][4], int* randomindex){
     if (MatJogo[randomindex[0]][randomindex[1]] != 0)
