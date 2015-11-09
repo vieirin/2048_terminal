@@ -87,6 +87,13 @@ int jogar(int MatJogo[][4]){
     movimento = ler_movimento();
     mover(movimento, MatJogo);
 
+    if (verifica_score(MatJogo) == 1024)
+    {
+        printf("Parabéns, você ganhou!\n");
+        getchar();
+        return 0;
+    }
+
     return 1;
 }
 
@@ -153,9 +160,10 @@ void move_cima(int MatJogo[][4]){
     {
         for (i = 0; i < 4; ++i)
         {
+            movi = 0;
             if (MatJogo[i][j]==0)
             {
-                for (searcher = i; searcher < 4; ++searcher)
+                for (searcher = i; searcher < 4 && !movi; ++searcher)
                 {
                     if (MatJogo[searcher][j] > 0){
                         MatJogo[i][j] = MatJogo[searcher][j];
@@ -190,14 +198,16 @@ void move_baixo(int MatJogo[][4]){
     {
         for (i = 3; i >= 0; --i)
         {
+            movi = 0;
             if (MatJogo[i][j]==0)
             {
-                for (searcher = i; searcher >= 0; --searcher)
+                for (searcher = i; searcher >= 0 && !movi; --searcher)
                 {
                     if (MatJogo[searcher][j] > 0){
                         MatJogo[i][j] = MatJogo[searcher][j];
                         MatJogo[searcher][j] = 0;
                         movi = 1;
+                        printf("movi\n");
                     }
                     else
                         movi = 0;
@@ -226,9 +236,10 @@ void move_direita(int MatJogo[][4]){
     {
         for (j = 3; j >= 0; --j)
         {
+            movi = 0;
             if (MatJogo[i][j]==0)
             {
-                for (searcher = j; searcher >= 0; --searcher)
+                for (searcher = j; searcher >= 0 && !movi; --searcher)
                 {
                     if (MatJogo[i][searcher] > 0){
                         MatJogo[i][j] = MatJogo[i][searcher];
@@ -263,9 +274,10 @@ void move_esquerda(int MatJogo[][4]){
     {
         for (j = 0; j < 4; ++j)
         {
+            movi = 0;
             if (MatJogo[i][j]==0)
             {
-                for (searcher = j; searcher < 4; ++searcher)
+                for (searcher = j; searcher < 4 && !movi; ++searcher)
                 {
                     if (MatJogo[i][searcher] > 0){
                         MatJogo[i][j] = MatJogo[i][searcher];
@@ -292,6 +304,7 @@ void move_esquerda(int MatJogo[][4]){
         }
     }
 }
+
 void calcula_random_index(int* coordenada){
     coordenada[0] = rand() % 4;
     coordenada[1] = rand() % 4;
@@ -314,4 +327,22 @@ int tiver_algo_na_posicao(int MatJogo[][4], int* randomindex){
     if (MatJogo[randomindex[0]][randomindex[1]] != 0)
         return 1;
     else return 0;
+}
+
+int verifica_score(int MatJogo[][4])
+{
+    int i, j;
+    int maior = 0;
+
+    for (i = 0; i < 4; ++i)
+    {
+        for (j = 0; j < 4; ++j)
+        {
+          if (MatJogo[i][j] > maior)
+          {
+            maior = MatJogo[i][j];
+          }           
+        }
+    }
+    return maior;
 }

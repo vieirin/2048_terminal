@@ -17,3 +17,4 @@ void calcula_random_index(int*);
 void move_esquerda(int MatJogo[][4]);
 void move_direita(int MatJogo[][4]);
 void move_baixo(int MatJogo[][4]);
+int verifica_score(int MatJogo[][4]);
